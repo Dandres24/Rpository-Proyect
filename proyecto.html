@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proyecto</title>
+  <style>
+    :root{
+      --bg:#fff; --ink:#0f172a; --muted:#64748b; --ring:#1E88E5;
+      --card:#fff; --border:#e5e7eb; --shadow:0 10px 30px rgba(2,6,23,.08);
+      --radius:18px;
+    }
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:Inter,Segoe UI,system-ui,Arial;
+    }
+    .wrap{max-width:900px; margin:auto; padding:40px 22px;}
+    a.back{
+      display:inline-flex; align-items:center; gap:8px;
+      text-decoration:none; color:var(--ring); font-weight:600;
+      border:1px solid var(--border); padding:8px 12px;
+      border-radius:12px;
+    }
+    .hero{
+      margin-top:24px; border:1px solid var(--border);
+      border-radius:var(--radius); padding:18px;
+      box-shadow:var(--shadow); background:var(--card);
+    }
+    .hero h2{text-align:center;}
+    .ratio{
+      position:relative; width:100%; aspect-ratio:16/9; margin-top:16px;
+    }
+    .ratio iframe, .ratio video{
+      position:absolute; inset:0; width:100%; height:100%;
+      border-radius:var(--radius); object-fit:cover;
+    }
+    .helper{
+      text-align:center; margin-top:12px; color:var(--muted);
+    }
+    .helper a{color:var(--ring); font-weight:600; text-decoration:none;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="index.html" class="back">← Volver</a>
+    <div class="hero">
+      <h2 id="title"></h2>
+      <div id="video" class="ratio"></div>
+      <div id="fallback" class="helper" hidden>
+        🎥 El video no pudo cargarse. 
+        <a id="yt" target="_blank">Abrir en YouTube</a>.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === PROYECTOS ===
+    const PROJECTS = {
+      "proyecto-1": { 
+        title:"Tasi y la fiesta de la selva", 
+        youtube:"https://www.youtube.com/watch?v=vUba9n6nXf4" 
+      },
+      "proyecto-2": { 
+        title:"La hormiga rosada", 
+        youtube:"https://www.youtube.com/watch?v=Gn_Ch-BFE-o" 
+      },
+      "proyecto-3": { 
+        title:"Margaret la mariposa de alas rotas", 
+        src:"" 
+      },
+      "proyecto-4": { 
+        title:"Paco y su recorrido por el rio sinú", 
+        src:"" 
+      },
+      "proyecto-5": { 
+        title:"Reinas del océano", 
+        youtube:"https://www.youtube.com/watch?v=npZ1U-x199k"
+      }
+    };
+
+    // === OBTENER PARÁMETRO ===
+    const params = new URLSearchParams(location.search);
+    const slug = params.get("slug");
+    const project = PROJECTS[slug];
+
+    // === ELEMENTOS ===
+    const titleEl = document.getElementById("title");
+    const videoEl = document.getElementById("video");
+    const fallback = document.getElementById("fallback");
+    const ytLink = document.getElementById("yt");
+
+    // === RENDER ===
+    if (project) {
+      titleEl.textContent = project.title;
+
+      // Si tiene video local (src)
+      if (project.src) {
+        const video = document.createElement("video");
+        video.src = project.src.replace(/\\/g, "/"); // normaliza ruta
+        video.controls = true;
+        video.preload = "metadata";
+        video.onerror = () => {
+          fallback.hidden = false;
+          fallback.textContent = "🎥 No se pudo cargar el video local.";
+        };
+        videoEl.appendChild(video);
+      } 
+      // Si tiene video de YouTube
+      else if (project.youtube) {
+        const id = project.youtube.match(/(?:v=|be\/)([A-Za-z0-9_-]{11})/i)?.[1];
+        if (id) {
+          const iframe = document.createElement("iframe");
+          iframe.src = `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
+          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          iframe.allowFullscreen = true;
+          videoEl.appendChild(iframe);
+
+          // Fallback si no carga en 3s
+          let loaded = false;
+          iframe.onload = () => loaded = true;
+          setTimeout(() => {
+            if (!loaded) {
+              videoEl.innerHTML = "";
+              fallback.hidden = false;
+              ytLink.href = project.youtube;
+            }
+          }, 3000);
+        } else {
+          fallback.hidden = false;
+          ytLink.href = project.youtube;
+        }
+      } 
+      else {
+        fallback.hidden = false;
+        fallback.textContent = "🎥 No hay video disponible para este proyecto.";
+      }
+
+    } else {
+      titleEl.textContent = "Proyecto no encontrado";
+      fallback.hidden = false;
+      fallback.textContent = "⚠️ No existe información para este proyecto.";
+    }
+  </script>
+</body>
+</html>

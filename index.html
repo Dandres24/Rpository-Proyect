@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Repositorio De Recursos Educativos Digitales</title>
+  <style>
+    :root{
+      --bg:#fff; --ink:#0f172a; --muted:#64748b; --ring:#1E88E5;
+      --card:#fff; --border:#e5e7eb; --shadow:0 10px 30px rgba(2,6,23,.08);
+      --shadow-hover:0 20px 60px rgba(2,6,23,.14);
+      --radius:18px;
+    }
+    body{margin:0; background:var(--bg); color:var(--ink);
+      font-family:Inter,Segoe UI,system-ui,Arial; text-align:center;}
+    .wrap{max-width:1100px; margin:auto; padding:40px 22px;}
+    h1{margin-bottom:32px;}
+    .grid{
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:28px; justify-items:center;
+    }
+    .card{display:block; text-decoration:none; color:inherit; width:100%; max-width:320px;}
+    .thumb{
+      border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); overflow:hidden; transition:.25s;
+      aspect-ratio:16/9;
+    }
+    .thumb img{width:100%; height:100%; object-fit:cover;}
+    .card:hover .thumb{transform:translateY(-3px); box-shadow:var(--shadow-hover);}
+    .caption{margin-top:10px; font-weight:600;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Repositorio De Recursos Educativos Digitales</h1>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script>
+    const PROJECTS = [
+      { title:"Tasi y la fiesta de la selva", slug:"proyecto-1", src:"assets/Tasy.png" },
+      { title:"La hormiga rosada", slug:"proyecto-2", src:"assets/La hormiga .png" },
+      { title:"Margaret la mariposa de alas rotas", slug:"proyecto-3", src:"assets/Margaret.png" },
+      { title:"Paco y su recorrido por el rio sinú", slug:"proyecto-4", src:"assets/Paco.png" },
+      { title:"Reinas del océano", slug:"proyecto-5", src:"assets/Reinas.png" }
+    ];
+
+    const grid=document.getElementById("grid");
+    PROJECTS.forEach(p=>{
+      const a=document.createElement("a");
+      a.href=`proyecto.html?slug=${p.slug}`;
+      a.className="card";
+      a.innerHTML=`
+        <div class="thumb"><img src="${p.src}" alt="${p.title}"></div>
+        <div class="caption">${p.title}</div>`;
+      grid.appendChild(a);
+    });
+  </script>
+</body>
+</html>
